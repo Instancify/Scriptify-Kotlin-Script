@@ -1,11 +1,21 @@
-package com.instancify.scriptify.kts.script
+package com.instancify.scriptify.kts.script.bridge
 
 import com.instancify.scriptify.api.script.Script
 import com.instancify.scriptify.api.script.function.definition.ScriptFunctionDefinition
 import com.instancify.scriptify.api.script.function.definition.ScriptFunctionExecutor
 
+/**
+ * This class is a bridge between Kotlin script and Scriptify.
+ */
 class KtsBridge(private val script: Script<*>) {
 
+    /**
+     * Call a function and get its result.
+     *
+     * WARNING: this method is called from the script built by KtsPreludeBuilder,
+     * do not delete it, change its name or signature.
+     * @see KtsPreludeBuilder
+     */
     fun callFunction(functionName: String, args: Array<Any?>): Any? {
         if (script.functionManager == null || script.functionManager.functions == null) {
             throw IllegalArgumentException("No functions registered")
@@ -24,6 +34,13 @@ class KtsBridge(private val script: Script<*>) {
         }
     }
 
+    /**
+     * Find a constant and get its value.
+     *
+     * WARNING: this method is called from the script built by KtsPreludeBuilder,
+     * do not delete it, change its name or signature.
+     * @see KtsPreludeBuilder
+     */
     fun findConstant(constantName: String): Any? {
         val constant = script.constantManager.getConstant(constantName)
             ?: throw IllegalArgumentException("Constant not found: $constantName")

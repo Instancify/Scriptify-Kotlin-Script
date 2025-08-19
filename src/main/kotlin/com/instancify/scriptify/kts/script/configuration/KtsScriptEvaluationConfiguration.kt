@@ -1,4 +1,4 @@
-package com.instancify.scriptify.kts.script
+package com.instancify.scriptify.kts.script.configuration
 
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 

@@ -1,10 +1,18 @@
-package com.instancify.scriptify.kts.script
+package com.instancify.scriptify.kts.script.bridge
 
 import com.instancify.scriptify.api.script.function.definition.ScriptFunctionExecutor
+import com.instancify.scriptify.kts.script.KtsScript
 import org.jetbrains.annotations.Nullable
 
+/**
+ * This class collects the “head” of the script,
+ * which contains all constants and functions registered in the script.
+ */
 object KtsPreludeBuilder {
 
+    /**
+     * Builds the script "head" from KtsScript and the script itself.
+     */
     fun build(script: KtsScript, scriptCode: String): String {
         val sb = StringBuilder()
 
@@ -93,23 +101,5 @@ object KtsPreludeBuilder {
             else -> type.name
         }
         return if (required) t else "$t?"
-    }
-
-    private fun escapeString(input: String): String {
-        val result = StringBuilder(input.length * 2)
-        for (char in input) {
-            when (char) {
-                '\\' -> result.append("\\\\")
-                '"'  -> result.append("\\\"")
-                '\'' -> result.append("\\'")
-                '\n' -> result.append("\\n")
-                '\r' -> result.append("\\r")
-                '\t' -> result.append("\\t")
-                '\b' -> result.append("\\b")
-                '\u000C' -> result.append("\\f")
-                else -> result.append(char)
-            }
-        }
-        return result.toString()
     }
 }

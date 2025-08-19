@@ -8,10 +8,17 @@ import com.instancify.scriptify.api.script.security.ScriptSecurityManager
 import com.instancify.scriptify.core.script.constant.StandardConstantManager
 import com.instancify.scriptify.core.script.function.StandardFunctionManager
 import com.instancify.scriptify.core.script.security.StandardSecurityManager
+import com.instancify.scriptify.kts.script.bridge.KtsBridge
+import com.instancify.scriptify.kts.script.bridge.KtsPreludeBuilder
+import com.instancify.scriptify.kts.script.configuration.KtsScriptCompilationConfiguration
+import com.instancify.scriptify.kts.script.configuration.KtsScriptEvaluationConfiguration
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.StringScriptSource
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 
+/**
+ * Implementation of Scriptify for Kotlin Script.
+ */
 class KtsScript : Script<EvaluationResult?> {
 
     private val securityManager: ScriptSecurityManager = StandardSecurityManager()

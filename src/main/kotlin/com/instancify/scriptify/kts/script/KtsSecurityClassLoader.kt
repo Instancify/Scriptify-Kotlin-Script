@@ -6,6 +6,9 @@ import com.instancify.scriptify.api.script.security.exclude.ClassSecurityExclude
 import com.instancify.scriptify.api.script.security.exclude.PackageSecurityExclude
 import com.instancify.scriptify.api.script.security.exclude.SecurityExclude
 
+/**
+ * Secure class loader for Kotlin scripts to control access to classes.
+ */
 class KtsSecurityClassLoader(
     private val securityManager: ScriptSecurityManager
 ) : ClassLoader(), SecurityClassAccessor {
@@ -25,6 +28,7 @@ class KtsSecurityClassLoader(
     }
 
     private fun addEssentialKotlinClasses() {
+        // Add packages that should be allowed by default
         allowedPackages.add("kotlin.")
         allowedPackages.add("kotlinx.")
 
@@ -38,7 +42,7 @@ class KtsSecurityClassLoader(
         return securityManager.excludes
     }
 
-    fun isClassAllowed(className: String): Boolean {
+    private fun isClassAllowed(className: String): Boolean {
         if (!securityManager.securityMode) {
             return true;
         }

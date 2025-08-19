@@ -1,6 +1,8 @@
-package com.instancify.scriptify.kts.script
+package com.instancify.scriptify.kts.script.configuration
 
 import com.instancify.scriptify.api.script.security.ScriptSecurityManager
+import com.instancify.scriptify.kts.script.KtsSecurityClassLoader
+import com.instancify.scriptify.kts.script.bridge.KtsBridge
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.api.providedProperties
