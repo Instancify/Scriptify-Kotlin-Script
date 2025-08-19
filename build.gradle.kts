@@ -13,15 +13,10 @@ repositories {
 }
 
 dependencies {
-    implementation("com.instancify.scriptify:core:1.4.2-SNAPSHOT")
-    implementation("com.instancify.scriptify:common:1.4.2-SNAPSHOT")
-    implementation("org.jetbrains.kotlin:kotlin-scripting-common:2.2.10")
-    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm:2.2.10")
-    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm-host:2.2.10")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.10")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:2.2.10")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.2")
+    compileOnlyApi("com.instancify.scriptify:core:1.4.2-SNAPSHOT")
+    compileOnlyApi("org.jetbrains.kotlin:kotlin-scripting-common:2.2.10")
+    compileOnlyApi("org.jetbrains.kotlin:kotlin-scripting-jvm:2.2.10")
+    compileOnlyApi("org.jetbrains.kotlin:kotlin-scripting-jvm-host:2.2.10")
 }
 
 publishing {
