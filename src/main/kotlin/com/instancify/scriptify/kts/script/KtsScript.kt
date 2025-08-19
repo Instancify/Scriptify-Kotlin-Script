@@ -1,0 +1,68 @@
+package com.instancify.scriptify.kts.script
+
+import com.instancify.scriptify.api.exception.ScriptException
+import com.instancify.scriptify.api.script.Script
+import com.instancify.scriptify.api.script.constant.ScriptConstantManager
+import com.instancify.scriptify.api.script.function.ScriptFunctionManager
+import com.instancify.scriptify.api.script.security.ScriptSecurityManager
+import com.instancify.scriptify.core.script.constant.StandardConstantManager
+import com.instancify.scriptify.core.script.function.StandardFunctionManager
+import com.instancify.scriptify.core.script.security.StandardSecurityManager
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.StringScriptSource
+import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+
+class KtsScript : Script<EvaluationResult?> {
+
+    private val securityManager: ScriptSecurityManager = StandardSecurityManager()
+    private var functionManager: ScriptFunctionManager = StandardFunctionManager()
+    private var constantManager: ScriptConstantManager = StandardConstantManager()
+
+    override fun getSecurityManager() = securityManager
+
+    override fun getFunctionManager() = functionManager
+
+    override fun getConstantManager() = constantManager
+
+    override fun setFunctionManager(functionManager: ScriptFunctionManager) {
+        this.functionManager = functionManager
+    }
+
+    override fun setConstantManager(constantManager: ScriptConstantManager) {
+        this.constantManager = constantManager
+    }
+
+    @Throws(ScriptException::class)
+    override fun eval(script: String): EvaluationResult? {
+        val host = BasicJvmScriptingHost()
+        val bridge = KtsBridge(this)
+
+        val source = StringScriptSource(KtsPreludeBuilder.build(this, script))
+        val result = host.eval(
+            source,
+            KtsScriptCompilationConfiguration,
+            KtsScriptEvaluationConfiguration.with {
+                providedProperties(mapOf("__bridge__" to bridge))
+            }
+        )
+
+        if (result is ResultWithDiagnostics.Success) {
+            if (result.value.returnValue is ResultValue.Error) {
+                throw ScriptException((result.value.returnValue as ResultValue.Error).error)
+            }
+            return result.value
+        }
+
+        result.reports.forEach {
+            if (it.isError()) {
+                throw if (it.exception != null) {
+                    ScriptException(it.exception)
+                } else {
+                    ScriptException(it.message)
+                }
+            }
+        }
+        return null
+    }
+
+}
