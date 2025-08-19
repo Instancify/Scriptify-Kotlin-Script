@@ -61,7 +61,7 @@ Adding dependency:
 ```xml
 <dependency>
     <groupId>com.instancify.scriptify.kts</groupId>
-    <artifactId>kts</artifactId>
+    <artifactId>script</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
@@ -77,5 +77,5 @@ maven {
 
 Adding dependency:
 ```groovy
-implementation "com.instancify.scriptify.kts:kts:1.0.0-SNAPSHOT"
+implementation "com.instancify.scriptify.kts:script:1.0.0-SNAPSHOT"
 ```

@@ -23,7 +23,7 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = project.group.toString()
-            artifactId = "kts"
+            artifactId = "script"
             version = project.version.toString()
             from(components["java"])
         }
