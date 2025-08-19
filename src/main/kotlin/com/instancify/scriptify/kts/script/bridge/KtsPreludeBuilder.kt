@@ -16,6 +16,22 @@ object KtsPreludeBuilder {
     fun build(script: KtsScript, scriptCode: String): String {
         val sb = StringBuilder()
 
+        // split the script into lines (package, imports, code)
+        val lines = scriptCode.lines()
+        val packageLine = lines.firstOrNull { it.trim().startsWith("package ") }
+        val imports = lines.filter { it.trim().startsWith("import ") }
+        val body = lines.filterNot { it.trim().startsWith("import ") || it.trim().startsWith("package ") }
+
+        packageLine?.let {
+            sb.append(it).append("\n\n")
+        }
+
+        imports.forEach { sb.append(it).append("\n") }
+        if (imports.isNotEmpty()) {
+            sb.append("\n")
+        }
+
+        // adding constants
         for (constant in script.constantManager.constants.values) {
             val name = constant.name
             val type = constant.value?.let {
@@ -26,6 +42,7 @@ object KtsPreludeBuilder {
 
         sb.append("\n")
 
+        // adding functions
         for (definition in script.functionManager.functions.values) {
             val name = definition.function.name
             for (executor in definition.executors) {
@@ -36,8 +53,9 @@ object KtsPreludeBuilder {
             }
         }
 
+        // adding other script code
         sb.append("\n\n")
-        sb.append(scriptCode)
+        body.forEach { sb.append(it).append("\n") }
 
         return sb.toString()
     }

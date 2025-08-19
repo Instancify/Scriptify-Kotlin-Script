@@ -24,6 +24,7 @@ class KtsScript : Script<EvaluationResult?> {
     private val securityManager: ScriptSecurityManager = StandardSecurityManager()
     private var functionManager: ScriptFunctionManager = StandardFunctionManager()
     private var constantManager: ScriptConstantManager = StandardConstantManager()
+    private val extraScript = mutableListOf<String>()
 
     override fun getSecurityManager() = securityManager
 
@@ -39,18 +40,27 @@ class KtsScript : Script<EvaluationResult?> {
         this.constantManager = constantManager
     }
 
+    override fun addExtraScript(script: String) {
+        extraScript.add(script)
+    }
+
     @Throws(ScriptException::class)
     override fun eval(script: String): EvaluationResult? {
         val host = BasicJvmScriptingHost()
         val bridge = KtsBridge(this)
 
-        val source = StringScriptSource(KtsPreludeBuilder.build(this, script))
+        val source = StringScriptSource(KtsPreludeBuilder.build(this, buildString {
+            // Building full script including extra script code
+            for (extra in extraScript) {
+                append("$extra\n")
+            }
+            append(script)
+        }))
+
         val result = host.eval(
             source,
             KtsScriptCompilationConfiguration(securityManager),
-            KtsScriptEvaluationConfiguration.with {
-                providedProperties(mapOf("__bridge__" to bridge))
-            }
+            KtsScriptEvaluationConfiguration(bridge)
         )
 
         if (result is ResultWithDiagnostics.Success) {
@@ -71,5 +81,4 @@ class KtsScript : Script<EvaluationResult?> {
         }
         return null
     }
-
 }
