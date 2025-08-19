@@ -6,7 +6,7 @@ import com.instancify.scriptify.api.script.function.definition.ScriptFunctionExe
 
 class KtsBridge(private val script: Script<*>) {
 
-    fun call(functionName: String, args: Array<Any?>): Any? {
+    fun callFunction(functionName: String, args: Array<Any?>): Any? {
         if (script.functionManager == null || script.functionManager.functions == null) {
             throw IllegalArgumentException("No functions registered")
         }
@@ -22,6 +22,12 @@ class KtsBridge(private val script: Script<*>) {
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
+    }
+
+    fun findConstant(constantName: String): Any? {
+        val constant = script.constantManager.getConstant(constantName)
+            ?: throw IllegalArgumentException("Constant not found: $constantName")
+        return constant.value
     }
 
     private fun findMatchingExecutor(definition: ScriptFunctionDefinition, args: Array<Any?>): ScriptFunctionExecutor {

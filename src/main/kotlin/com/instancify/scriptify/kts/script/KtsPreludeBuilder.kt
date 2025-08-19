@@ -8,6 +8,16 @@ object KtsPreludeBuilder {
     fun build(script: KtsScript, scriptCode: String): String {
         val sb = StringBuilder()
 
+        for (constant in script.constantManager.constants.values) {
+            val name = constant.name
+            val type = constant.value?.let {
+                convertKotlinType(it.javaClass, true)
+            } ?: "Any?"
+            sb.append("val $name: $type = __bridge__.findConstant(\"$name\") as $type\n")
+        }
+
+        sb.append("\n")
+
         for (definition in script.functionManager.functions.values) {
             val name = definition.function.name
             for (executor in definition.executors) {
@@ -50,8 +60,8 @@ object KtsPreludeBuilder {
 
         val returnType = convertKotlinType(ex.method.returnType, true)
         return when {
-            returnType == "Unit" -> "__bridge__.call(\"$name\", kotlin.arrayOf($callArgs))"
-            else -> "return __bridge__.call(\"$name\", kotlin.arrayOf($callArgs)) as $returnType"
+            returnType == "Unit" -> "__bridge__.callFunction(\"$name\", kotlin.arrayOf($callArgs))"
+            else -> "return __bridge__.callFunction(\"$name\", kotlin.arrayOf($callArgs)) as $returnType"
         }
     }
 
@@ -83,5 +93,23 @@ object KtsPreludeBuilder {
             else -> type.name
         }
         return if (required) t else "$t?"
+    }
+
+    private fun escapeString(input: String): String {
+        val result = StringBuilder(input.length * 2)
+        for (char in input) {
+            when (char) {
+                '\\' -> result.append("\\\\")
+                '"'  -> result.append("\\\"")
+                '\'' -> result.append("\\'")
+                '\n' -> result.append("\\n")
+                '\r' -> result.append("\\r")
+                '\t' -> result.append("\\t")
+                '\b' -> result.append("\\b")
+                '\u000C' -> result.append("\\f")
+                else -> result.append(char)
+            }
+        }
+        return result.toString()
     }
 }
