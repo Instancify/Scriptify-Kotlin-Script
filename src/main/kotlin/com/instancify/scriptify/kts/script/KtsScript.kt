@@ -40,7 +40,7 @@ class KtsScript : Script<EvaluationResult?> {
         val source = StringScriptSource(KtsPreludeBuilder.build(this, script))
         val result = host.eval(
             source,
-            KtsScriptCompilationConfiguration,
+            KtsScriptCompilationConfiguration(securityManager),
             KtsScriptEvaluationConfiguration.with {
                 providedProperties(mapOf("__bridge__" to bridge))
             }
